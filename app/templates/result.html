@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado do Processamento DICOM</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Processamento de Arquivo DICOM Concluído</h1>
+        <p>Arquivo enviado: <strong>{{ filename }}</strong></p>
+
+        <div class="image-gallery">
+            {% if imagem %}
+            <div class="image-display">
+                <h2>Imagem DICOM</h2>
+                <img src="data:image/png;base64,{{ imagem }}" alt="Imagem DICOM Processada">
+            </div>
+            {% else %}
+            <div class="image-display error">
+                <p class="error">Não foi possível exibir a imagem DICOM original.</p>
+            </div>
+            {% endif %}
+
+            {% if imagem_xai %}
+            <div class="image-display">
+                <h2>Imagem XAI</h2>
+                <img src="data:image/png;base64,{{ imagem_xai }}" alt="Imagem XAI">
+            </div>
+            {% else %}
+            <div class="image-display error">
+                <p class="error">Não foi possível exibir a imagem XAI.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <h2>Informações da Predição</h2>
+        <div class="data-section">
+            <p><strong>Classe da predição:</strong> {{ pred }}</p>
+            <p><strong>Probabilidade:</strong> {{ prob }}</p>
+        </div>
+
+        <h2>Metadados DICOM Principais</h2>
+        <div class="data-section">
+            {% if metadata %}
+                {% for key, value in metadata.items() %}
+                    <p><strong>{{ key }}:</strong> {{ value }}</p>
+                {% endfor %}
+            {% else %}
+                <p>Nenhum metadado principal encontrado.</p>
+            {% endif %}
+        </div>
+
+        <h2>Informações da Imagem (Pixel Data)</h2>
+        <div class="data-section">
+            {% if image_info %}
+                {% if image_info.ProcessingError %}
+                    <p class="error">{{ image_info.ProcessingError }}</p>
+                {% elif image_info.Status %}
+                    <p>{{ image_info.Status }}</p>
+                {% else %}
+                    <p><strong>Shape da Imagem:</strong> {{ image_info.Shape }}</p>
+                    <p><strong>Tipo de Dado (dtype):</strong> {{ image_info.DataType }}</p>
+                    <p><strong>Valor Mínimo de Pixel (rescalado):</strong> {{ "%.2f"|format(image_info.MinPixelValue) }}</p>
+                    <p><strong>Valor Máximo de Pixel (rescalado):</strong> {{ "%.2f"|format(image_info.MaxPixelValue) }}</p>
+                    <p><strong>Valor Médio de Pixel (rescalado):</strong> {{ "%.2f"|format(image_info.MeanPixelValue) }}</p>
+                    <p><strong>Desvio Padrão dos Pixels (rescalado):</strong> {{ "%.2f"|format(image_info.StdDevPixelValue) }}</p>
+                {% endif %}
+            {% else %}
+                <p>Nenhuma informação de Pixel Data disponível.</p>
+            {% endif %}
+        </div>
+
+        <div class="back-link">
+            <a href="/">Fazer outro Upload</a>
+        </div>
+    </div>
+</body>
+</html>

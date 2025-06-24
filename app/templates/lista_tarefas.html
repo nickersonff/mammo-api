@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Tarefas{% endblock %}
+
+{% block content %}
+    <h1>Lista de Tarefas</h1>
+
+    <form action="/add_item/" method="post">
+        <input type="text" name="title" placeholder="Nova tarefa" required>
+        <input type="text" name="description" placeholder="Descrição (opcional)">
+        <button type="submit">Adicionar</button>
+    </form>
+
+    <ul>
+        {% for item in items %}
+            <li {% if item.is_completed %}class="completed"{% endif %}>
+                <span>
+                    <strong>{{ item.title }}</strong>
+                    {% if item.description %} - {{ item.description }}{% endif %}
+                </span>
+                <div>
+                    {% if not item.is_completed %}
+                        <form action="/complete_item/{{ item.id }}" method="post" style="display:inline;">
+                            <button type="submit">Concluir</button>
+                        </form>
+                    {% else %}
+                         <form action="/uncomplete_item/{{ item.id }}" method="post" style="display:inline;">
+                            <button type="submit">Desfazer</button>
+                        </form>
+                    {% endif %}
+                    <form action="/delete_item/{{ item.id }}" method="post" style="display:inline;">
+                        <button type="submit" class="delete-btn">Remover</button>
+                    </form>
+                </div>
+            </li>
+        {% else %}
+            <li>Nenhuma tarefa adicionada ainda.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
