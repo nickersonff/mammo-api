@@ -48,7 +48,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 #cria o modelo ML e carrega os pesos
-m = modelos.resnet50(weights='DEFAULT')
+m = modelos.resnet50(weights=None)
 op = optim.SGD(m.parameters(), lr=0.001, momentum=0.9)
 model = ai_model.Architecture(model=m, optimizer=op, loss_fn=torch.nn.CrossEntropyLoss())
 model.load_weights()
